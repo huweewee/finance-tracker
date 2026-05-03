@@ -77,6 +77,10 @@ finance-tracker/
 ├── requirements.txt    # Python dependencies
 └── README.md
 
+## 📸 Screenshots
+<img width="1349" height="673" alt="image" src="https://github.com/user-attachments/assets/44a5a325-6a94-4c89-bb4b-fa6ebcd3527d" />
+<img width="1366" height="668" alt="image" src="https://github.com/user-attachments/assets/9351b0ba-daf7-4d66-83e0-c60b67646277" />
+
 ## 🔮 Future Improvements
 - User authentication (login/register)
 - Export expenses to CSV
