@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Finance Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<nav>
+  <span class="logo">fin<span>.</span>track</span>
+  <a href="/">Overview</a>
+  <a href="/dashboard" class="active">Dashboard</a>
+</nav>
+
+<div class="container">
+
+  <div class="page-header">
+    <h1>Spending Dashboard</h1>
+    <p>Visual breakdown of where your money goes.</p>
+  </div>
+
+  {% if category_totals %}
+  <div class="charts-grid">
+    <div class="card">
+      <div class="chart-title">By Category</div>
+      <canvas id="pieChart"></canvas>
+    </div>
+    <div class="card">
+      <div class="chart-title">Amount Breakdown</div>
+      <canvas id="barChart"></canvas>
+    </div>
+  </div>
+  {% else %}
+  <div class="card">
+    <div class="empty">
+      <div class="empty-icon">📊</div>
+      No data yet. Add some expenses to see your dashboard!
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+const labels = {{ category_totals.keys() | list | tojson }};
+const values = {{ category_totals.values() | list | tojson }};
+const colors = ["#c8f135","#7c6af7","#60a5fa","#f472b6","#34d399","#fb923c"];
+
+Chart.defaults.color = "#6b6b80";
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+
+new Chart(document.getElementById("pieChart"), {
+  type: "doughnut",
+  data: {
+    labels,
+    datasets: [{
+      data: values,
+      backgroundColor: colors,
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    cutout: "65%",
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: { padding: 16, usePointStyle: true, pointStyleWidth: 8 }
+      }
+    }
+  }
+});
+
+new Chart(document.getElementById("barChart"), {
+  type: "bar",
+  data: {
+    labels,
+    datasets: [{
+      label: "Amount ($)",
+      data: values,
+      backgroundColor: colors,
+      borderRadius: 8,
+      borderSkipped: false
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: { color: "rgba(255,255,255,0.05)" },
+        ticks: { callback: v => "$" + v }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+</script>
+</body>
+</html>
