@@ -7,7 +7,7 @@ A full-stack web application for tracking personal expenses with AI-generated sp
 ![Gemini](https://img.shields.io/badge/Gemini-AI-orange)
 
 ## 🌐 Live Demo
-[finance-tracker-xxxx.onrender.com](https://finance-tracker-xxxx.onrender.com)
+[https://finance-tracker-m3kc.onrender.com]
 
 ## ✨ Features
 - **Add & delete expenses** with description, amount, category, and date
