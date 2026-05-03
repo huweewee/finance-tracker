@@ -76,25 +76,34 @@ def insights():
     )
 
     api_key = os.getenv("GEMINI_API_KEY")
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent?key={api_key}"
+    models = [
+        "gemini-2.0-flash-001",
+        "gemini-2.0-flash",
+        "gemini-2.5-flash",
+        "gemini-2.0-flash-lite-001",
+    ]
 
-    payload = {
-        "contents": [{
-            "parts": [{
-                "text": (
-                    f"Here are my recent expenses:\n{summary}\n\n"
-                    "Give me 3 short, practical insights about my spending habits. "
-                    "Be friendly, specific, and use emojis."
-                )
-            }]
-        }]
-    }
+    prompt = (
+        f"Here are my recent expenses:\n{summary}\n\n"
+        "Give me 3 short, practical insights about my spending habits. "
+        "Be friendly, specific, and use emojis."
+    )
 
-    response = requests.post(url, json=payload)
-    result = response.json()
-    print("GEMINI RESPONSE:", result)  # add this line
-    insight = result["candidates"][0]["content"]["parts"][0]["text"]
-    return jsonify({"insight": insight})
+    for model in models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+        payload = {"contents": [{"parts": [{"text": prompt}]}]}
+        try:
+            response = requests.post(url, json=payload, timeout=10)
+            result = response.json()
+            print(f"Tried {model}:", result.get("error", {}).get("message", "OK"))
+            if "candidates" in result:
+                insight = result["candidates"][0]["content"]["parts"][0]["text"]
+                return jsonify({"insight": insight})
+        except Exception as e:
+            print(f"Error with {model}: {e}")
+            continue
+
+    return jsonify({"insight": "AI is currently unavailable. Please try again in a moment. ⏳"})
 
 if __name__ == "__main__":
     app.run(debug=True)
